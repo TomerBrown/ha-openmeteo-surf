@@ -210,6 +210,7 @@ class OpenMeteoSurfCard extends HTMLElement {
       <style>${this._styles()}</style>
       <ha-card>
         <div class="card-header">
+          <img src="/openmeteo_surf/icon.png" class="header-logo" />
           <span class="title">${condIcon} ${title}</span>
         </div>
         <div class="card-content">
@@ -367,8 +368,30 @@ class OpenMeteoSurfCard extends HTMLElement {
         font-weight: 600;
         letter-spacing: 0.02em;
       }
+      .header-logo {
+        height: 28px;
+        width: 28px;
+        margin-right: 12px;
+        border-radius: 50%;
+        border: 1px solid rgba(255,255,255,0.2);
+        background: #fff;
+      }
 
-      .card-content { padding: 0; }
+      .card-content { padding: 0; position: relative; }
+      .card-content::before {
+        content: "";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 150px;
+        height: 150px;
+        background-image: url("/openmeteo_surf/icon.png");
+        background-size: contain;
+        background-repeat: no-repeat;
+        opacity: 0.03;
+        pointer-events: none;
+      }
 
       /* ── Current grid ── */
       .current-grid {

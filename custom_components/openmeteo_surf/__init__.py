@@ -16,6 +16,7 @@ from .coordinator import OpenMeteoSurfDataUpdateCoordinator
 PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BUTTON, Platform.WEATHER]
 
 CARD_URL = "/openmeteo_surf/openmeteo-surf-card.js"
+URL_BASE = "/openmeteo_surf"
 
 
 async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
@@ -47,17 +48,17 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 
 async def _register_card(hass: HomeAssistant) -> None:
-    """Register the custom Lovelace card as a static resource."""
+    """Register the custom Lovelace card and icons as a static resource."""
     # Only register once per session
     if hass.data.get(DOMAIN, {}).get("__card_registered"):
         return
 
-    # 1. Register the static path
+    # 1. Register the static path for the entire www folder
     await hass.http.async_register_static_paths(
         [
             StaticPathConfig(
-                CARD_URL,
-                str(Path(__file__).parent / "www" / "openmeteo-surf-card.js"),
+                URL_BASE,
+                str(Path(__file__).parent / "www"),
                 False,
             )
         ]
@@ -66,7 +67,6 @@ async def _register_card(hass: HomeAssistant) -> None:
     # 2. Register as a Lovelace resource if in storage mode
     async def _async_register_lovelace_resource() -> None:
         """Register the card resource if not already present."""
-        # The 'lovelace' component stores its data in hass.data["lovelace"]
         from homeassistant.components.lovelace import DOMAIN as LOVELACE_DOMAIN
         
         lovelace = hass.data.get(LOVELACE_DOMAIN)
@@ -77,23 +77,22 @@ async def _register_card(hass: HomeAssistant) -> None:
         if not resources:
             return
 
-        # Ensure resources are loaded
         if not resources.loaded:
             await resources.async_load()
 
-        # Check if already registered (exact match or with version)
+        # Check if already registered (any version of this card)
         if any(item.get("url").startswith(CARD_URL) for item in resources.async_items()):
             return
 
-        # Add the resource
+        # Add the resource with a version string to bust cache
         await resources.async_create_item(
-            {"res_type": "module", "url": CARD_URL}
+            {"res_type": "module", "url": f"{CARD_URL}?v=1.0.1"}
         )
 
     # Use a task to not block setup
     hass.async_create_task(_async_register_lovelace_resource())
     
-    hass.data.setdefault(DOMAIN, {})[ "__card_registered"] = True
+    hass.data.setdefault(DOMAIN, {})["__card_registered"] = True
 
 
 async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:
