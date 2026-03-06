@@ -11,6 +11,7 @@ DEFAULT_UPDATE_INTERVAL = 60  # Default 60 minutes
 CONF_LATITUDE = "latitude"
 CONF_LONGITUDE = "longitude"
 CONF_NAME = "name"
+CONF_TIMEZONE = "timezone"
 
 UPDATE_INTERVAL_OPTIONS = [5, 10, 30, 60, 120, 360]
 

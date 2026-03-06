@@ -27,11 +27,13 @@ class OpenMeteoSurfApiClient:
         latitude: float,
         longitude: float,
         session: aiohttp.ClientSession,
+        timezone: str = "auto",
     ) -> None:
         """Initialize the API client."""
         self._latitude = latitude
         self._longitude = longitude
         self._session = session
+        self._timezone = timezone
 
     async def async_get_data(self) -> dict:
         """Get current + forecast data from the API."""
@@ -56,7 +58,7 @@ class OpenMeteoSurfApiClient:
             "current": "wave_height,wave_period,wave_direction,swell_wave_height,swell_wave_period,swell_wave_direction,sea_surface_temperature",
             "hourly": "wave_height,wave_period,wave_direction,swell_wave_height,swell_wave_period,swell_wave_direction,sea_surface_temperature",
             "daily": "wave_height_max,wave_period_max,wave_direction_dominant,swell_wave_height_max,swell_wave_period_max",
-            "timezone": "auto",
+            "timezone": self._timezone,
         }
         return await self._api_wrapper(MARINE_API_URL, params)
 
@@ -68,7 +70,7 @@ class OpenMeteoSurfApiClient:
             "current": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,wind_gusts_10m,weather_code",
             "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,wind_gusts_10m,weather_code",
             "daily": "temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max,wind_gusts_10m_max,weather_code",
-            "timezone": "auto",
+            "timezone": self._timezone,
             "temperature_unit": "celsius",
             "wind_speed_unit": "kmh",
             "precipitation_unit": "mm",

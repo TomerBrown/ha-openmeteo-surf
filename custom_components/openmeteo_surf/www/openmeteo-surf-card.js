@@ -503,10 +503,22 @@ class OpenMeteoSurfCardEditor extends HTMLElement {
   }
 
   _render() {
+    if (!this._hass) return;
     const entityVal = this._config.entity || "";
     const ftVal = this._config.forecast_type || "both";
     const paramsVal = (this._config.show_params || DEFAULT_SHOW_PARAMS).join(", ");
     const titleVal = this._config.title || "";
+
+    // Get all weather entities for the dropdown
+    const weatherEntities = Object.keys(this._hass.states)
+      .filter((eid) => eid.startsWith("weather."))
+      .sort();
+
+    const entityOptions = weatherEntities.map((eid) => {
+      const stateObj = this._hass.states[eid];
+      const name = stateObj.attributes.friendly_name || eid;
+      return `<option value="${eid}" ${eid === entityVal ? "selected" : ""}>${name} (${eid})</option>`;
+    }).join("");
 
     this.shadowRoot.innerHTML = `
       <style>
@@ -521,7 +533,10 @@ class OpenMeteoSurfCardEditor extends HTMLElement {
       </style>
       <div class="editor">
         <label>Entity (weather.*)</label>
-        <input id="entity" value="${entityVal}" placeholder="weather.pipeline" />
+        <select id="entity">
+          <option value="" ${entityVal === "" ? "selected" : ""}>Select a weather entity</option>
+          ${entityOptions}
+        </select>
 
         <label>Title (optional)</label>
         <input id="title" value="${titleVal}" placeholder="Auto from entity name" />
@@ -542,7 +557,9 @@ class OpenMeteoSurfCardEditor extends HTMLElement {
     ["entity", "title", "forecast_type", "show_params"].forEach((id) => {
       const el = this.shadowRoot.getElementById(id);
       el.addEventListener("change", () => this._onChange());
-      el.addEventListener("input", () => this._onChange());
+      if (el.tagName === "INPUT") {
+        el.addEventListener("input", () => this._onChange());
+      }
     });
   }
 

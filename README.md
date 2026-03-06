@@ -40,6 +40,9 @@ A Home Assistant integration that provides detailed surfing and marine weather d
 ## Dashboard UI
 We have provided a beautiful dashboard template with icons and emojis. See [docs/UI.md](docs/UI.md) for the YAML code.
 
+### Example
+![Example of how the cards looks](docs/card_example.png)
+
 ## Local Testing
 To test this integration locally without affecting your main Home Assistant instance, you can run a fresh Home Assistant container using Docker:
 

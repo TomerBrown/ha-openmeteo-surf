@@ -4,6 +4,10 @@
 
 The integration includes a custom Lovelace card that displays current conditions and hourly/daily forecasts in a surf-optimized layout.
 
+## Example
+
+![Example of how the cards looks](card_example.png)
+
 ### Basic usage
 
 ```yaml

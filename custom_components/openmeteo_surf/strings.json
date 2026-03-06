@@ -5,7 +5,8 @@
         "data": {
           "name": "Surf Spot Name",
           "latitude": "Latitude",
-          "longitude": "Longitude"
+          "longitude": "Longitude",
+          "timezone": "Timezone"
         },
         "description": "Enter the coordinates for your surf spot. Defaults to your Home Assistant location."
       }

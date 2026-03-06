@@ -10,7 +10,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.aiohttp_client import async_get_clientsession
 
 from .api import OpenMeteoSurfApiClient
-from .const import CONF_LATITUDE, CONF_LONGITUDE, DOMAIN
+from .const import CONF_LATITUDE, CONF_LONGITUDE, CONF_TIMEZONE, DOMAIN
 from .coordinator import OpenMeteoSurfDataUpdateCoordinator
 
 PLATFORMS: list[Platform] = [Platform.SENSOR, Platform.BUTTON, Platform.WEATHER]
@@ -29,6 +29,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
         latitude=entry.data[CONF_LATITUDE],
         longitude=entry.data[CONF_LONGITUDE],
         session=async_get_clientsession(hass),
+        timezone=entry.data.get(CONF_TIMEZONE, "auto"),
     )
     
     coordinator = OpenMeteoSurfDataUpdateCoordinator(hass, client)

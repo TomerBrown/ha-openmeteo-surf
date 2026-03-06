@@ -17,6 +17,7 @@ from .const import (
     CONF_LATITUDE,
     CONF_LONGITUDE,
     CONF_NAME,
+    CONF_TIMEZONE,
     CONF_UPDATE_INTERVAL,
     DEFAULT_UPDATE_INTERVAL,
     DOMAIN,
@@ -81,6 +82,7 @@ class OpenMeteoSurfConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                             CONF_NAME: user_input.get(CONF_NAME, "Open-Meteo Surf"),
                             CONF_LATITUDE: location_data[CONF_LATITUDE],
                             CONF_LONGITUDE: location_data[CONF_LONGITUDE],
+                            CONF_TIMEZONE: user_input.get(CONF_TIMEZONE, self.hass.config.time_zone),
                         },
                     )
             else:
@@ -102,7 +104,10 @@ class OpenMeteoSurfConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                 }
             ): selector.LocationSelector(
                 selector.LocationSelectorConfig(radius=False)
-            )
+            ),
+            vol.Required(
+                CONF_TIMEZONE, default=self.hass.config.time_zone
+            ): selector.TextSelector(),
         })
 
         return self.async_show_form(
