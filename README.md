@@ -40,6 +40,25 @@ A Home Assistant integration that provides detailed surfing and marine weather d
 ## Dashboard UI
 We have provided a beautiful dashboard template with icons and emojis. See [docs/UI.md](docs/UI.md) for the YAML code.
 
+## Local Testing
+To test this integration locally without affecting your main Home Assistant instance, you can run a fresh Home Assistant container using Docker:
+
+1. Ensure Docker is installed.
+2. Run the following command from the root of this repository:
+
+```bash
+docker run -d \
+  --name homeassistant-test \
+  --privileged \
+  --restart=unless-stopped \
+  -e TZ=America/Los_Angeles \
+  -v $(pwd)/custom_components:/config/custom_components \
+  -v $(pwd)/config:/config \
+  -p 8123:8123 \
+  ghcr.io/home-assistant/home-assistant:stable
+```
+3. Open `http://localhost:8123` in your browser. This will mount your current codebase straight into Home Assistant.
+
 ## Metrics Included
 | Entity | Unit | Description |
 | :--- | :--- | :--- |

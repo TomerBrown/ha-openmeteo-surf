@@ -42,35 +42,72 @@ class OpenMeteoSurfConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     ) -> config_entries.FlowResult:
         """Handle the initial step."""
         errors: dict[str, str] = {}
+        location_data = None
         if user_input is not None:
-            try:
-                await self._test_credentials(
-                    latitude=user_input[CONF_LATITUDE],
-                    longitude=user_input[CONF_LONGITUDE],
-                )
-            except OpenMeteoSurfApiClientCommunicationError:
-                errors["base"] = "cannot_connect"
-            except OpenMeteoSurfApiClientError:
-                errors["base"] = "unknown"
+            # Handle new selector format
+            if "location" in user_input and isinstance(user_input["location"], dict):
+                location_data = {
+                    CONF_LATITUDE: float(user_input["location"].get("latitude", user_input.get(CONF_LATITUDE))),
+                    CONF_LONGITUDE: float(user_input["location"].get("longitude", user_input.get(CONF_LONGITUDE))),
+                }
+            # Handle legacy format or fallback
+            elif CONF_LATITUDE in user_input and CONF_LONGITUDE in user_input:
+                location_data = {
+                    CONF_LATITUDE: float(user_input[CONF_LATITUDE]),
+                    CONF_LONGITUDE: float(user_input[CONF_LONGITUDE]),
+                }
             else:
-                return self.async_create_entry(
-                    title=user_input[CONF_NAME],
-                    data=user_input,
-                )
+                LOGGER.warning("Could not parse location from user input: %s", user_input)
+
+            if location_data:
+                try:
+                    await self._test_credentials(
+                        latitude=location_data[CONF_LATITUDE],
+                        longitude=location_data[CONF_LONGITUDE],
+                    )
+                except OpenMeteoSurfApiClientCommunicationError as comm_ex:
+                    LOGGER.error("Communication error while testing API: %s", comm_ex)
+                    errors["base"] = "cannot_connect"
+                except OpenMeteoSurfApiClientError as api_ex:
+                    LOGGER.error("API error while testing credentials: %s", api_ex)
+                    errors["base"] = "unknown"
+                except Exception as ex:  # pylint: disable=broad-except
+                    LOGGER.exception("Unexpected exception during setup: %s", ex)
+                    errors["base"] = "unknown"
+                else:
+                    return self.async_create_entry(
+                        title=user_input.get(CONF_NAME, "Open-Meteo Surf"),
+                        data={
+                            CONF_NAME: user_input.get(CONF_NAME, "Open-Meteo Surf"),
+                            CONF_LATITUDE: location_data[CONF_LATITUDE],
+                            CONF_LONGITUDE: location_data[CONF_LONGITUDE],
+                        },
+                    )
+            else:
+                errors["base"] = "invalid_location"
+
+        schema = vol.Schema({
+            vol.Required(CONF_NAME, default="Open-Meteo Surf"): str,
+        })
+        
+        # In Home Assistant 2023.x+ we can use selector.LocationSelector
+        from homeassistant.helpers import selector
+        schema = schema.extend({
+            vol.Required(
+                "location", 
+                default={
+                    "latitude": self.hass.config.latitude, 
+                    "longitude": self.hass.config.longitude, 
+                    "radius": 0
+                }
+            ): selector.LocationSelector(
+                selector.LocationSelectorConfig(radius=False)
+            )
+        })
 
         return self.async_show_form(
             step_id="user",
-            data_schema=vol.Schema(
-                {
-                    vol.Required(CONF_NAME): str,
-                    vol.Required(
-                        CONF_LATITUDE, default=self.hass.config.latitude
-                    ): cv.latitude,
-                    vol.Required(
-                        CONF_LONGITUDE, default=self.hass.config.longitude
-                    ): cv.longitude,
-                }
-            ),
+            data_schema=schema,
             errors=errors,
         )
 

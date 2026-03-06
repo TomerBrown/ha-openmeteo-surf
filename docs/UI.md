@@ -1,7 +1,74 @@
-# Open-Meteo Surf Dashboard Template
+# Open-Meteo Surf Dashboard Templates
 
-This YAML can be used in a "Manual" card or in your Dashboard YAML configuration. 
-**Note:** Replace `<surf_spot_slug>` with your actual surf spot's entity name (e.g., `pipeline` if you named it "Pipeline").
+## Custom Surf Forecast Card (Recommended)
+
+The integration includes a custom Lovelace card that displays current conditions and hourly/daily forecasts in a surf-optimized layout.
+
+### Basic usage
+
+```yaml
+type: custom:openmeteo-surf-card
+entity: weather.<surf_spot_slug>
+```
+
+### Full configuration
+
+```yaml
+type: custom:openmeteo-surf-card
+entity: weather.<surf_spot_slug>
+title: "My Surf Spot"
+forecast_type: both            # "hourly" | "daily" | "both"
+show_params:
+  - wave_height
+  - wave_period
+  - wave_direction
+  - swell_wave_height
+  - wind_speed
+  - wind_direction
+  - temperature
+  - precipitation
+  - sea_surface_temperature
+```
+
+### Configuration options
+
+| Option | Required | Default | Description |
+|--------|----------|---------|-------------|
+| `entity` | ✅ | – | Weather entity ID (e.g. `weather.pipeline`) |
+| `title` | ❌ | Entity name | Card title override |
+| `forecast_type` | ❌ | `both` | `hourly`, `daily`, or `both` |
+| `show_params` | ❌ | (all main params) | Which parameters to show in forecast table |
+
+### Available parameters
+
+| Key | Description |
+|-----|-------------|
+| `wave_height` | Wave height (m) |
+| `wave_period` | Wave period (s) |
+| `wave_direction` | Wave direction (°) |
+| `swell_wave_height` | Swell wave height (m) |
+| `swell_wave_period` | Swell period (s) |
+| `swell_wave_direction` | Swell direction (°) |
+| `sea_surface_temperature` | Water temperature (°C) |
+| `temperature` | Air temperature (°C) |
+| `wind_speed` | Wind speed (km/h) |
+| `wind_direction` | Wind direction (°) |
+| `precipitation` | Precipitation (mm) |
+
+### Card setup
+
+The card resource is auto-registered when the integration loads. If it doesn't appear, manually add this resource:
+
+**Settings → Dashboards → Resources → Add Resource:**
+- URL: `/openmeteo_surf/openmeteo-surf-card.js`
+- Type: JavaScript Module
+
+---
+
+## Sensor-based Dashboard (Alternative)
+
+This YAML uses the individual sensor entities for a simpler view without forecasts.
+**Note:** Replace `<surf_spot_slug>` with your actual surf spot's entity name.
 
 ```yaml
 type: vertical-stack

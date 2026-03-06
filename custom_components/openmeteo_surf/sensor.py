@@ -94,15 +94,7 @@ SENSORS: tuple[OpenMeteoSurfSensorEntityDescription, ...] = (
         icon="mdi:thermometer-water",
         value_fn=lambda data: data.get("sea_surface_temperature"),
     ),
-    OpenMeteoSurfSensorEntityDescription(
-        key="sea_level_height",
-        name="Sea Level",
-        native_unit_of_measurement=UnitOfLength.METERS,
-        device_class=SensorDeviceClass.DISTANCE,
-        state_class=SensorStateClass.MEASUREMENT,
-        icon="mdi:sea",
-        value_fn=lambda data: data.get("sea_level_height"),
-    ),
+
     OpenMeteoSurfSensorEntityDescription(
         key="wind_speed_10m",
         name="Wind Speed",
@@ -188,4 +180,5 @@ class OpenMeteoSurfSensor(CoordinatorEntity, SensorEntity):
         """Return the state of the sensor."""
         if self.coordinator.data is None:
             return None
-        return self.entity_description.value_fn(self.coordinator.data)
+        current = self.coordinator.data.get("current", {})
+        return self.entity_description.value_fn(current)

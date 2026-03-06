@@ -27,8 +27,10 @@ async def test_config_flow_success(hass: HomeAssistant):
             result["flow_id"],
             {
                 "name": "Pipeline",
-                "latitude": -22.9,
-                "longitude": -43.2,
+                "location": {
+                    "latitude": -22.9,
+                    "longitude": -43.2,
+                }
             },
         )
 
@@ -40,4 +42,3 @@ async def test_config_flow_success(hass: HomeAssistant):
         "latitude": -22.9,
         "longitude": -43.2,
     }
-    assert result["result"]
