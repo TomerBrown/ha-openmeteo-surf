@@ -47,10 +47,11 @@ async def async_setup_entry(hass: HomeAssistant, entry: ConfigEntry) -> bool:
 
 async def _register_card(hass: HomeAssistant) -> None:
     """Register the custom Lovelace card as a static resource."""
-    # Only register once
-    if DOMAIN in hass.data and "__card_registered" in hass.data.get(DOMAIN, {}):
+    # Only register once per session
+    if hass.data.get(DOMAIN, {}).get("__card_registered"):
         return
-    
+
+    # 1. Register the static path
     await hass.http.async_register_static_paths(
         [
             StaticPathConfig(
@@ -60,36 +61,38 @@ async def _register_card(hass: HomeAssistant) -> None:
             )
         ]
     )
-    
-    # Register as a Lovelace resource
-    hass.data.setdefault(DOMAIN, {})
-    hass.data[DOMAIN]["__card_registered"] = True
-    
-    # Add the resource via the lovelace resources collection
-    hass.components.frontend.async_register_built_in_panel(
-        "lovelace", require_admin=False
-    ) if False else None  # panel already registered
-    
-    from homeassistant.components.lovelace.resources import (
-        ResourceStorageCollection,
-    )
-    
-    async def _register_resource() -> None:
+
+    # 2. Register as a Lovelace resource if in storage mode
+    async def _async_register_lovelace_resource() -> None:
         """Register the card resource if not already present."""
-        try:
-            resources = hass.data.get("lovelace_resources")
-            if resources and isinstance(resources, ResourceStorageCollection):
-                # Check if already registered
-                for item in resources.async_items():
-                    if item.get("url") == CARD_URL:
-                        return
-                await resources.async_create_item(
-                    {"res_type": "module", "url": CARD_URL}
-                )
-        except Exception:  # pylint: disable=broad-except
-            pass  # Resource registration is best-effort
+        # The 'lovelace' component stores its data in hass.data["lovelace"]
+        from homeassistant.components.lovelace import DOMAIN as LOVELACE_DOMAIN
+        
+        lovelace = hass.data.get(LOVELACE_DOMAIN)
+        if not lovelace or not hasattr(lovelace, "resources"):
+            return
+
+        resources = lovelace.resources
+        if not resources:
+            return
+
+        # Ensure resources are loaded
+        if not resources.loaded:
+            await resources.async_load()
+
+        # Check if already registered (exact match or with version)
+        if any(item.get("url").startswith(CARD_URL) for item in resources.async_items()):
+            return
+
+        # Add the resource
+        await resources.async_create_item(
+            {"res_type": "module", "url": CARD_URL}
+        )
+
+    # Use a task to not block setup
+    hass.async_create_task(_async_register_lovelace_resource())
     
-    hass.async_create_task(_register_resource())
+    hass.data.setdefault(DOMAIN, {})[ "__card_registered"] = True
 
 
 async def async_reload_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:

@@ -8,14 +8,14 @@ The integration includes a custom Lovelace card that displays current conditions
 
 ```yaml
 type: custom:openmeteo-surf-card
-entity: weather.<surf_spot_slug>
+entity: weather.open_meteo_surf
 ```
 
 ### Full configuration
 
 ```yaml
 type: custom:openmeteo-surf-card
-entity: weather.<surf_spot_slug>
+entity: weather.open_meteo_surf
 title: "My Surf Spot"
 forecast_type: both            # "hourly" | "daily" | "both"
 show_params:
@@ -68,13 +68,13 @@ The card resource is auto-registered when the integration loads. If it doesn't a
 ## Sensor-based Dashboard (Alternative)
 
 This YAML uses the individual sensor entities for a simpler view without forecasts.
-**Note:** Replace `<surf_spot_slug>` with your actual surf spot's entity name.
+**Note:** Replace `open_meteo_surf` with your actual surf spot's entity name.
 
 ```yaml
 type: vertical-stack
 cards:
   - type: entity
-    entity: sensor.<surf_spot_slug>_wave_height
+    entity: sensor.open_meteo_surf_wave_height
     name: "🌊 Current Wave Height"
     icon: mdi:water
     attribute: unit_of_measurement
@@ -82,7 +82,7 @@ cards:
   - type: horizontal-stack
     cards:
       - type: gauge
-        entity: sensor.<surf_spot_slug>_wave_height
+        entity: sensor.open_meteo_surf_wave_height
         min: 0
         max: 5
         needle: true
@@ -92,7 +92,7 @@ cards:
           red: 3
         name: "🌊 Waves (m)"
       - type: gauge
-        entity: sensor.<surf_spot_slug>_wind_speed
+        entity: sensor.open_meteo_surf_wind_speed
         min: 0
         max: 50
         needle: true
@@ -103,13 +103,13 @@ cards:
     show_icon: true
     show_state: true
     entities:
-      - entity: sensor.<surf_spot_slug>_wave_period
+      - entity: sensor.open_meteo_surf_wave_period
         name: "⏱️ Period"
         icon: mdi:timer-outline
-      - entity: sensor.<surf_spot_slug>_wave_direction
+      - entity: sensor.open_meteo_surf_wave_direction
         name: "🧭 Direction"
         icon: mdi:compass-outline
-      - entity: sensor.<surf_spot_slug>_swell_height
+      - entity: sensor.open_meteo_surf_swell_height
         name: "🌊 Swell"
         icon: mdi:waves
 
@@ -117,24 +117,24 @@ cards:
     title: "🌊 Detailed Marine Conditions"
     show_header_toggle: false
     entities:
-      - entity: sensor.<surf_spot_slug>_swell_period
+      - entity: sensor.open_meteo_surf_swell_period
         name: "⏱️ Swell Period"
-      - entity: sensor.<surf_spot_slug>_swell_direction
+      - entity: sensor.open_meteo_surf_swell_direction
         name: "🧭 Swell Direction"
-      - entity: sensor.<surf_spot_slug>_sea_surface_temperature
+      - entity: sensor.open_meteo_surf_sea_surface_temperature
         name: "🌡️ Water Temp"
-      - entity: sensor.<surf_spot_slug>_sea_level
+      - entity: sensor.open_meteo_surf_sea_level
         name: "📏 Sea Level (Tide)"
 
   - type: entities
     title: "🌦️ Local Weather"
     show_header_toggle: false
     entities:
-      - entity: sensor.<surf_spot_slug>_air_temperature
+      - entity: sensor.open_meteo_surf_air_temperature
         name: "🌡️ Air Temp"
-      - entity: sensor.<surf_spot_slug>_wind_gusts
+      - entity: sensor.open_meteo_surf_wind_gusts
         name: "🌪️ Wind Gusts"
-      - entity: sensor.<surf_spot_slug>_precipitation
+      - entity: sensor.open_meteo_surf_precipitation
         name: "🌧️ Precipitation"
 
   - type: button
@@ -145,5 +145,5 @@ cards:
       action: call-service
       service: button.press
       target:
-        entity_id: button.<surf_spot_slug>_refresh
+        entity_id: button.open_meteo_surf_refresh
 ```

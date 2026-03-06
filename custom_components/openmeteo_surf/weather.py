@@ -144,6 +144,15 @@ class OpenMeteoSurfWeather(CoordinatorEntity, WeatherEntity):
                 native_wind_speed=entry.get("wind_speed_10m"),
                 wind_bearing=entry.get("wind_direction_10m"),
             )
+            # Add marine data to forecast
+            forecast["native_wave_height"] = entry.get("wave_height")
+            forecast["native_wave_period"] = entry.get("wave_period")
+            forecast["native_wave_direction"] = entry.get("wave_direction")
+            forecast["native_swell_wave_height"] = entry.get("swell_wave_height")
+            forecast["native_swell_wave_period"] = entry.get("swell_wave_period")
+            forecast["native_swell_wave_direction"] = entry.get("swell_wave_direction")
+            forecast["native_sea_surface_temperature"] = entry.get("sea_surface_temperature")
+            
             forecasts.append(forecast)
 
         return forecasts
@@ -171,6 +180,13 @@ class OpenMeteoSurfWeather(CoordinatorEntity, WeatherEntity):
                 native_precipitation=entry.get("precipitation_sum"),
                 native_wind_speed=entry.get("wind_speed_10m_max"),
             )
+            # Add marine data to forecast
+            forecast["native_wave_height_max"] = entry.get("wave_height_max")
+            forecast["native_wave_period_max"] = entry.get("wave_period_max")
+            forecast["native_wave_direction_dominant"] = entry.get("wave_direction_dominant")
+            forecast["native_swell_wave_height_max"] = entry.get("swell_wave_height_max")
+            forecast["native_swell_wave_period_max"] = entry.get("swell_wave_period_max")
+            
             forecasts.append(forecast)
 
         return forecasts

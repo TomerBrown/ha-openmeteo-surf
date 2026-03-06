@@ -4,7 +4,7 @@
   "documentation": "https://github.com/tomerbrown/ha-openmeteo-surf",
   "issue_tracker": "https://github.com/tomerbrown/ha-openmeteo-surf/issues",
   "requirements": ["async_timeout"],
-  "dependencies": [],
+  "dependencies": ["frontend", "http"],
   "codeowners": ["@tomerbrown"],
   "config_flow": true,
   "iot_class": "cloud_polling",

@@ -69,6 +69,9 @@ class OpenMeteoSurfApiClient:
             "hourly": "temperature_2m,precipitation,wind_speed_10m,wind_direction_10m,wind_gusts_10m,weather_code",
             "daily": "temperature_2m_max,temperature_2m_min,precipitation_sum,wind_speed_10m_max,wind_gusts_10m_max,weather_code",
             "timezone": "auto",
+            "temperature_unit": "celsius",
+            "wind_speed_unit": "kmh",
+            "precipitation_unit": "mm",
         }
         return await self._api_wrapper(FORECAST_API_URL, params)
 

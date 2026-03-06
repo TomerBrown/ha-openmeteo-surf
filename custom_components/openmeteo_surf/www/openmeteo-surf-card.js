@@ -27,83 +27,83 @@ const DEFAULT_SHOW_PARAMS = [
 // ── Human labels & icons ────────────────────────────────────────────
 const PARAM_META = {
   // hourly
-  wave_height:          { label: "Waves",      unit: "m",    icon: "🌊" },
-  wave_period:          { label: "Period",     unit: "s",    icon: "⏱️" },
-  wave_direction:       { label: "Wave Dir",   unit: "°",    icon: "🧭" },
-  swell_wave_height:    { label: "Swell",      unit: "m",    icon: "🌊" },
-  swell_wave_period:    { label: "Swell Per",  unit: "s",    icon: "⏱️" },
-  swell_wave_direction: { label: "Swell Dir",  unit: "°",    icon: "🧭" },
-  sea_surface_temperature: { label: "Water",   unit: "°C",   icon: "🌡️" },
-  temperature:          { label: "Air",        unit: "°C",   icon: "🌡️" },
-  wind_speed:           { label: "Wind",       unit: "km/h", icon: "💨" },
-  wind_direction:       { label: "Wind Dir",   unit: "°",    icon: "🧭" },
-  precipitation:        { label: "Rain",       unit: "mm",   icon: "🌧️" },
+  wave_height: { label: "Waves", unit: "m", icon: "🌊" },
+  wave_period: { label: "Period", unit: "s", icon: "⏱️" },
+  wave_direction: { label: "Wave Dir", unit: "°", icon: "🧭" },
+  swell_wave_height: { label: "Swell", unit: "m", icon: "🌊" },
+  swell_wave_period: { label: "Swell Per", unit: "s", icon: "⏱️" },
+  swell_wave_direction: { label: "Swell Dir", unit: "°", icon: "🧭" },
+  sea_surface_temperature: { label: "Water", unit: "°C", icon: "🌡️" },
+  temperature: { label: "Air", unit: "°C", icon: "🌡️" },
+  wind_speed: { label: "Wind", unit: "km/h", icon: "💨" },
+  wind_direction: { label: "Wind Dir", unit: "°", icon: "🧭" },
+  precipitation: { label: "Rain", unit: "mm", icon: "🌧️" },
   // daily aliases
-  wave_height_max:      { label: "Max Waves",  unit: "m",    icon: "🌊" },
-  wave_period_max:      { label: "Max Period", unit: "s",    icon: "⏱️" },
-  wave_direction_dominant: { label: "Wave Dir", unit: "°",   icon: "🧭" },
-  swell_wave_height_max:   { label: "Max Swell", unit: "m",  icon: "🌊" },
-  swell_wave_period_max:   { label: "Max Swell Per", unit: "s", icon: "⏱️" },
-  temperature_max:      { label: "Max Temp",   unit: "°C",   icon: "🌡️" },
-  temperature_min:      { label: "Min Temp",   unit: "°C",   icon: "🌡️" },
-  wind_speed_max:       { label: "Max Wind",   unit: "km/h", icon: "💨" },
-  precipitation_sum:    { label: "Total Rain", unit: "mm",   icon: "🌧️" },
+  wave_height_max: { label: "Max Waves", unit: "m", icon: "🌊" },
+  wave_period_max: { label: "Max Period", unit: "s", icon: "⏱️" },
+  wave_direction_dominant: { label: "Wave Dir", unit: "°", icon: "🧭" },
+  swell_wave_height_max: { label: "Max Swell", unit: "m", icon: "🌊" },
+  swell_wave_period_max: { label: "Max Swell Per", unit: "s", icon: "⏱️" },
+  temperature_max: { label: "Max Temp", unit: "°C", icon: "🌡️" },
+  temperature_min: { label: "Min Temp", unit: "°C", icon: "🌡️" },
+  wind_speed_max: { label: "Max Wind", unit: "km/h", icon: "💨" },
+  precipitation_sum: { label: "Total Rain", unit: "mm", icon: "🌧️" },
 };
 
 // Map hourly show_param keys → actual forecast data keys
 const HOURLY_KEY_MAP = {
-  wave_height:          "native_wave_height",
-  wave_period:          "native_wave_period",
-  wave_direction:       "native_wave_direction",
-  swell_wave_height:    "native_swell_wave_height",
-  swell_wave_period:    "native_swell_wave_period",
+  wave_height: "native_wave_height",
+  wave_period: "native_wave_period",
+  wave_direction: "native_wave_direction",
+  swell_wave_height: "native_swell_wave_height",
+  swell_wave_period: "native_swell_wave_period",
   swell_wave_direction: "native_swell_wave_direction",
   sea_surface_temperature: "native_sea_surface_temperature",
-  temperature:          "temperature",
-  wind_speed:           "wind_speed",
-  wind_direction:       "wind_bearing",
-  precipitation:        "precipitation",
+  temperature: "temperature",
+  wind_speed: "wind_speed",
+  wind_direction: "wind_bearing",
+  precipitation: "precipitation",
 };
 
 const DAILY_KEY_MAP = {
-  wave_height:          "native_wave_height_max",
-  wave_height_max:      "native_wave_height_max",
-  wave_period:          "native_wave_period_max",
-  wave_period_max:      "native_wave_period_max",
-  wave_direction:       "native_wave_direction_dominant",
+  wave_height: "native_wave_height_max",
+  wave_height_max: "native_wave_height_max",
+  wave_period: "native_wave_period_max",
+  wave_period_max: "native_wave_period_max",
+  wave_direction: "native_wave_direction_dominant",
   wave_direction_dominant: "native_wave_direction_dominant",
-  swell_wave_height:    "native_swell_wave_height_max",
+  swell_wave_height: "native_swell_wave_height_max",
   swell_wave_height_max: "native_swell_wave_height_max",
-  swell_wave_period:    "native_swell_wave_period_max",
+  swell_wave_period: "native_swell_wave_period_max",
   swell_wave_period_max: "native_swell_wave_period_max",
-  temperature:          "temperature",
-  temperature_max:      "temperature",
-  temperature_min:      "templow",
-  wind_speed:           "wind_speed",
-  wind_speed_max:       "wind_speed",
-  precipitation:        "precipitation",
-  precipitation_sum:    "precipitation",
-  wind_direction:       "wind_bearing",
+  temperature: "temperature",
+  temperature_max: "temperature",
+  temperature_min: "templow",
+  wind_speed: "wind_speed",
+  wind_speed_max: "wind_speed",
+  precipitation: "precipitation",
+  precipitation_sum: "precipitation",
+  wind_direction: "wind_bearing",
 };
 
 // ── Condition icons ─────────────────────────────────────────────────
 const CONDITION_ICONS = {
-  "sunny":            "☀️",
-  "partlycloudy":     "⛅",
-  "cloudy":           "☁️",
-  "fog":              "🌫️",
-  "rainy":            "🌧️",
-  "pouring":          "🌧️",
-  "snowy":            "🌨️",
-  "lightning-rainy":  "⛈️",
-  "exceptional":      "⚠️",
+  "sunny": "☀️",
+  "partlycloudy": "⛅",
+  "cloudy": "☁️",
+  "fog": "🌫️",
+  "rainy": "🌧️",
+  "pouring": "🌧️",
+  "snowy": "🌨️",
+  "lightning-rainy": "⛈️",
+  "exceptional": "⚠️",
 };
 
 // Degree → compass label
 function degToCompass(deg) {
   if (deg == null) return "–";
-  const dirs = ["N","NNE","NE","ENE","E","ESE","SE","SSE",
-                "S","SSW","SW","WSW","W","WNW","NW","NNW"];
+  const dirs = ["N", "NNE", "NE", "ENE", "E", "ESE", "SE", "SSE",
+    "S", "SSW", "SW", "WSW", "W", "WNW", "NW", "NNW"];
   return dirs[Math.round(deg / 22.5) % 16];
 }
 
@@ -180,7 +180,7 @@ class OpenMeteoSurfCard extends HTMLElement {
 
   _unsubscribeForecasts() {
     if (this._unsubHourly) { this._unsubHourly(); this._unsubHourly = null; }
-    if (this._unsubDaily)  { this._unsubDaily();  this._unsubDaily  = null; }
+    if (this._unsubDaily) { this._unsubDaily(); this._unsubDaily = null; }
   }
 
   getCardSize() { return 6; }
@@ -383,9 +383,6 @@ class OpenMeteoSurfCard extends HTMLElement {
         padding: 12px 10px;
         text-align: center;
       }
-      .stat-card.primary {
-        background: linear-gradient(135deg, rgba(14,165,233,0.08) 0%, rgba(14,165,233,0.02) 100%);
-      }
       .stat-icon { font-size: 1.2em; margin-bottom: 2px; }
       .stat-value {
         font-size: 1.05em;
@@ -429,6 +426,8 @@ class OpenMeteoSurfCard extends HTMLElement {
       /* ── Forecast table ── */
       .forecast-table-wrap {
         overflow-x: auto;
+        overflow-y: auto;
+        max-height: 250px;
         -webkit-overflow-scrolling: touch;
       }
       .forecast-table {
@@ -504,10 +503,10 @@ class OpenMeteoSurfCardEditor extends HTMLElement {
   }
 
   _render() {
-    const entityVal  = this._config.entity || "";
-    const ftVal      = this._config.forecast_type || "both";
-    const paramsVal  = (this._config.show_params || DEFAULT_SHOW_PARAMS).join(", ");
-    const titleVal   = this._config.title || "";
+    const entityVal = this._config.entity || "";
+    const ftVal = this._config.forecast_type || "both";
+    const paramsVal = (this._config.show_params || DEFAULT_SHOW_PARAMS).join(", ");
+    const titleVal = this._config.title || "";
 
     this.shadowRoot.innerHTML = `
       <style>
@@ -529,9 +528,9 @@ class OpenMeteoSurfCardEditor extends HTMLElement {
 
         <label>Forecast type</label>
         <select id="forecast_type">
-          <option value="both"   ${ftVal === "both"   ? "selected" : ""}>Both (hourly + daily)</option>
+          <option value="both"   ${ftVal === "both" ? "selected" : ""}>Both (hourly + daily)</option>
           <option value="hourly" ${ftVal === "hourly" ? "selected" : ""}>Hourly only</option>
-          <option value="daily"  ${ftVal === "daily"  ? "selected" : ""}>Daily only</option>
+          <option value="daily"  ${ftVal === "daily" ? "selected" : ""}>Daily only</option>
         </select>
 
         <label>Show parameters</label>
@@ -543,15 +542,15 @@ class OpenMeteoSurfCardEditor extends HTMLElement {
     ["entity", "title", "forecast_type", "show_params"].forEach((id) => {
       const el = this.shadowRoot.getElementById(id);
       el.addEventListener("change", () => this._onChange());
-      el.addEventListener("input",  () => this._onChange());
+      el.addEventListener("input", () => this._onChange());
     });
   }
 
   _onChange() {
-    const entity      = this.shadowRoot.getElementById("entity").value.trim();
-    const title       = this.shadowRoot.getElementById("title").value.trim();
-    const ft          = this.shadowRoot.getElementById("forecast_type").value;
-    const paramsRaw   = this.shadowRoot.getElementById("show_params").value;
+    const entity = this.shadowRoot.getElementById("entity").value.trim();
+    const title = this.shadowRoot.getElementById("title").value.trim();
+    const ft = this.shadowRoot.getElementById("forecast_type").value;
+    const paramsRaw = this.shadowRoot.getElementById("show_params").value;
     const show_params = paramsRaw.split(",").map((s) => s.trim()).filter(Boolean);
 
     this._config = { ...this._config, entity, forecast_type: ft, show_params };
