@@ -1,0 +1,18 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "data": {
+          "name": "Surf Spot Name",
+          "latitude": "Latitude",
+          "longitude": "Longitude"
+        },
+        "description": "Enter the coordinates for your surf spot. Defaults to your Home Assistant location."
+      }
+    },
+    "error": {
+      "cannot_connect": "Failed to connect to Open-Meteo API",
+      "unknown": "Unexpected error"
+    }
+  }
+}
