@@ -1,46 +1,61 @@
 # Open-Meteo Surf Integration for Home Assistant
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/custom-components/hacs)
+![License](https://img.shields.io/github/license/tomerbrown/ha-openmeteo-surf)
 
 A Home Assistant integration that provides detailed surfing and marine weather data using the Open-Meteo APIs.
 
 ## Features
-- **Marine Data:** Wave height, period, and direction; Swell height, period, and direction; Water temperature; Sea level height.
-- **Atmospheric Data:** Wind speed, direction, and gusts; Air temperature; Precipitation.
-- **Configurable Polling:** Choose update intervals from 5 to 360 minutes.
-- **Manual Refresh:** A dedicated button to force an immediate update.
-- **Multi-Location:** Add multiple surf spots as separate devices.
+- **🌊 Marine Data:** Wave height, period, and direction; Swell height, period, and direction; Water temperature; Sea level height.
+- **🌬️ Atmospheric Data:** Wind speed, direction, and gusts; Air temperature; Precipitation.
+- **⏱️ Configurable Polling:** Choose update intervals from 5 to 360 minutes.
+- **🔄 Manual Refresh:** A dedicated button to force an immediate update.
+- **📍 Multi-Location:** Add multiple surf spots as separate devices.
 
 ## Installation
 
-### Manual
-1. Copy the `custom_components/openmeteo_surf` directory to your Home Assistant `custom_components` folder.
-2. Restart Home Assistant.
-3. In the Home Assistant UI, go to **Settings** -> **Devices & Services** -> **Add Integration**.
-4. Search for "Open-Meteo Surf" and follow the instructions.
+### Option 1: HACS (Recommended)
+1. Ensure [HACS](https://hacs.xyz/) is installed.
+2. Open **HACS** from your Home Assistant sidebar.
+3. Click the **three dots** in the top right corner and select **Custom repositories**.
+4. Paste the URL of this repository: `https://github.com/tomerbrown/ha-openmeteo-surf`
+5. Select **Integration** as the category and click **Add**.
+6. Find **Open-Meteo Surf** in the HACS list and click **Download**.
+7. **Restart** Home Assistant.
 
-## Configuration
-During setup, you will be asked for:
-- **Surf Spot Name:** A friendly name for the location.
-- **Latitude/Longitude:** The coordinates of the surf spot (defaults to your Home Assistant location).
+### Option 2: Manual
+1. Download the latest release or clone this repository.
+2. Copy the `custom_components/openmeteo_surf` folder into your Home Assistant's `custom_components` directory.
+3. **Restart** Home Assistant.
 
-### Options
-After setup, you can click **Configure** on the integration card to change the **Update Interval**.
+## Setup
+1. In the Home Assistant UI, go to **Settings** -> **Devices & Services**.
+2. Click **+ Add Integration** in the bottom right.
+3. Search for **Open-Meteo Surf** and select it.
+4. Enter the details for your surf spot:
+   - **Name:** e.g., "Pipeline"
+   - **Latitude/Longitude:** Coordinates for the spot (defaults to your home location).
+5. Once added, you can click **Configure** on the integration card to adjust the **Update Interval**.
 
 ## Dashboard UI
-See [docs/UI.md](docs/UI.md) for a ready-to-use YAML template to create a beautiful dashboard for your surf spot.
+We have provided a beautiful dashboard template with icons and emojis. See [docs/UI.md](docs/UI.md) for the YAML code.
 
 ## Metrics Included
-- `wave_height`: Significant wave height (m)
-- `wave_period`: Wave period (s)
-- `wave_direction`: Wave direction (°)
-- `swell_wave_height`: Swell wave height (m)
-- `swell_wave_period`: Swell wave period (s)
-- `swell_wave_direction`: Swell wave direction (°)
-- `sea_surface_temperature`: Water temperature (°C)
-- `sea_level_height`: Sea level including tides (m)
-- `wind_speed_10m`: Wind speed (km/h)
-- `wind_direction_10m`: Wind direction (°)
-- `wind_gusts_10m`: Wind gusts (km/h)
-- `temperature_2m`: Air temperature (°C)
-- `precipitation`: Precipitation (mm)
+| Entity | Unit | Description |
+| :--- | :--- | :--- |
+| `wave_height` | m | Significant wave height |
+| `wave_period` | s | Wave period |
+| `wave_direction` | ° | Wave direction |
+| `swell_wave_height` | m | Swell wave height |
+| `swell_wave_period` | s | Swell wave period |
+| `swell_wave_direction` | ° | Swell wave direction |
+| `sea_surface_temperature` | °C | Water temperature |
+| `sea_level_height` | m | Sea level including tides |
+| `wind_speed_10m` | km/h | Wind speed |
+| `wind_direction_10m` | ° | Wind direction |
+| `wind_gusts_10m` | km/h | Wind gusts |
+| `temperature_2m` | °C | Air temperature |
+| `precipitation` | mm | Precipitation |
+
+## License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
