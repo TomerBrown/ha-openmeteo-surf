@@ -37,7 +37,7 @@ class OpenMeteoSurfWeather(CoordinatorEntity, WeatherEntity):
     """Representation of an Open-Meteo Surf weather entity."""
 
     _attr_native_temperature_unit = UnitOfTemperature.CELSIUS
-    _attr_native_wind_speed_unit = UnitOfSpeed.KILOMETERS_PER_HOUR
+    _attr_native_wind_speed_unit = UnitOfSpeed.KNOTS
     _attr_native_precipitation_unit = UnitOfPrecipitationDepth.MILLIMETERS
     _attr_supported_features = (
         WeatherEntityFeature.FORECAST_DAILY

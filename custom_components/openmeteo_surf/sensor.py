@@ -98,7 +98,7 @@ SENSORS: tuple[OpenMeteoSurfSensorEntityDescription, ...] = (
     OpenMeteoSurfSensorEntityDescription(
         key="wind_speed_10m",
         name="Wind Speed",
-        native_unit_of_measurement=UnitOfSpeed.KILOMETERS_PER_HOUR,
+        native_unit_of_measurement=UnitOfSpeed.KNOTS,
         device_class=SensorDeviceClass.WIND_SPEED,
         state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:weather-windy",
@@ -115,7 +115,7 @@ SENSORS: tuple[OpenMeteoSurfSensorEntityDescription, ...] = (
     OpenMeteoSurfSensorEntityDescription(
         key="wind_gusts_10m",
         name="Wind Gusts",
-        native_unit_of_measurement=UnitOfSpeed.KILOMETERS_PER_HOUR,
+        native_unit_of_measurement=UnitOfSpeed.KNOTS,
         device_class=SensorDeviceClass.WIND_SPEED,
         state_class=SensorStateClass.MEASUREMENT,
         icon="mdi:weather-windy",
