@@ -72,11 +72,27 @@ docker run -d \
 | `swell_wave_direction` | ° | Swell wave direction |
 | `sea_surface_temperature` | °C | Water temperature |
 | `sea_level_height` | m | Sea level including tides |
-| `wind_speed_10m` | km/h | Wind speed |
+| `wind_speed_10m` | kt | Wind speed |
 | `wind_direction_10m` | ° | Wind direction |
-| `wind_gusts_10m` | km/h | Wind gusts |
+| `wind_gusts_10m` | kt | Wind gusts |
 | `temperature_2m` | °C | Air temperature |
 | `precipitation` | mm | Precipitation |
+
+## Publishing Updates (for maintainers)
+
+HACS detects new versions via [GitHub releases](https://github.com/tomerbrown/ha-openmeteo-surf/releases). To publish an update:
+
+1. **Update version** in `custom_components/openmeteo_surf/manifest.json`
+2. **Update** [CHANGELOG.md](CHANGELOG.md) with the changes
+3. **Commit and push** to your default branch
+4. **Create and push a tag** (e.g. for v0.2.0):
+   ```bash
+   git tag v0.2.0
+   git push origin v0.2.0
+   ```
+5. The [release workflow](.github/workflows/release.yml) will automatically create a GitHub release
+
+HACS users will see the update in **HACS → Integrations** and can click **Update** to install.
 
 ## License
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
