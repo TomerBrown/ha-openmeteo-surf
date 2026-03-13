@@ -33,6 +33,22 @@ show_params:
   - temperature
   - precipitation
   - sea_surface_temperature
+# Optional appearance overrides (leave empty to use theme)
+primary_color: ""              # e.g. "#0ea5e9" or empty for theme
+border_radius: ""              # e.g. "12px" or 16
+tooltip_style: theme           # "theme" | "dark"
+show_header: true
+show_header_logo: true
+show_watermark: true
+# Content visibility
+show_current_conditions: true
+show_forecast_table: true
+show_tabs: true
+forecast_rows_hourly: 24       # optional, default 24 (12 in compact)
+forecast_rows_daily: 7         # optional, default 7 (5 in compact)
+# Refresh
+show_refresh_button: true
+show_refresh_text: true
 ```
 
 ### Configuration options
@@ -44,6 +60,23 @@ show_params:
 | `display_mode` | ❌ | `normal` | `compact` (smaller, fewer stats), `normal`, or `elaborated` (larger, more spacing) |
 | `forecast_type` | ❌ | `both` | `hourly`, `daily`, or `both` |
 | `show_params` | ❌ | (all main params) | Which parameters to show in forecast table |
+| `primary_color` | ❌ | (theme) | Override primary color (hex, e.g. `#0ea5e9`). Empty = use theme |
+| `border_radius` | ❌ | (theme) | Card border radius (e.g. `12px` or `16`). Empty = use theme |
+| `tooltip_style` | ❌ | `theme` | `theme` (match dashboard) or `dark` |
+| `show_header` | ❌ | `true` | Show/hide card header |
+| `show_header_logo` | ❌ | `true` | Show/hide logo in header |
+| `show_watermark` | ❌ | `true` | Show/hide faint icon watermark in content |
+| `show_current_conditions` | ❌ | `true` | Show/hide current stats grid |
+| `show_forecast_table` | ❌ | `true` | Show/hide forecast table |
+| `show_tabs` | ❌ | `true` | When `forecast_type: both`, show hourly/daily tabs |
+| `forecast_rows_hourly` | ❌ | 24 (12 compact) | Max hourly forecast rows |
+| `forecast_rows_daily` | ❌ | 7 (5 compact) | Max daily forecast rows |
+| `show_refresh_button` | ❌ | `true` | Show refresh button |
+| `show_refresh_text` | ❌ | `true` | Show "Refresh" text on button |
+
+### Theme matching
+
+The card uses Home Assistant theme variables (`--primary-color`, `--primary-text-color`, etc.) so it matches your applied theme. Override with `primary_color` or `border_radius` if needed.
 
 ### Available parameters
 

@@ -1,28 +1,33 @@
 /**
  * Open-Meteo Surf Card — Styles
- * Returns CSS string with display mode and responsive rules.
+ * Returns CSS string with display mode, theme vars, and config overrides.
  */
 
-export function getStyles(displayMode = "normal") {
+export function getStyles(displayMode = "normal", config = {}) {
+  const primary = config.primary_color || "var(--primary-color, #0ea5e9)";
+  const primaryDark = config.primary_color || "var(--dark-primary-color, var(--primary-color, #0284c7))";
+  const borderRadius = config.border_radius != null ? config.border_radius : "var(--ha-card-border-radius, 12px)";
+
   return `
     :host {
-      --surf-primary: #0ea5e9;
-      --surf-primary-dark: #0284c7;
+      --surf-primary: ${primary};
+      --surf-primary-dark: ${primaryDark};
       --surf-bg: var(--ha-card-background, var(--card-background-color, #fff));
       --surf-text: var(--primary-text-color, #1e293b);
       --surf-text-secondary: var(--secondary-text-color, #64748b);
       --surf-border: var(--divider-color, #e2e8f0);
-      --surf-hover: rgba(14,165,233,0.06);
+      --surf-hover: color-mix(in srgb, var(--surf-primary) 6%, transparent);
     }
 
     ha-card {
       overflow: hidden;
       font-family: var(--ha-card-font-family, 'Segoe UI', system-ui, sans-serif);
+      border-radius: ${typeof borderRadius === "number" ? `${borderRadius}px` : borderRadius};
     }
 
     .card-header {
-      background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%);
-      color: #fff;
+      background: linear-gradient(135deg, var(--surf-primary) 0%, var(--surf-primary-dark) 100%);
+      color: var(--header-text-color, #fff);
       padding: 16px 20px;
       display: flex;
       align-items: center;
@@ -106,6 +111,9 @@ export function getStyles(displayMode = "normal") {
       opacity: 0.03;
       pointer-events: none;
     }
+    .card-content.no-watermark::before {
+      display: none;
+    }
 
     /* ── Current grid ── */
     .current-grid {
@@ -130,7 +138,7 @@ export function getStyles(displayMode = "normal") {
       text-overflow: ellipsis;
       white-space: nowrap;
     }
-    .stat-card.primary .stat-value { color: var(--surf-primary-dark); }
+    .stat-card.primary .stat-value { color: var(--surf-primary); }
     .stat-label {
       font-size: 0.72em;
       text-transform: uppercase;
@@ -264,8 +272,8 @@ export function getStyles(displayMode = "normal") {
     .surf-tooltip {
       position: fixed;
       padding: 8px 12px;
-      background: rgba(15, 23, 42, 0.95);
-      color: #fff;
+      background: var(--surf-tooltip-bg, rgba(15, 23, 42, 0.95));
+      color: var(--surf-tooltip-text, #fff);
       font-size: 0.78em;
       font-weight: 400;
       line-height: 1.4;
@@ -278,6 +286,11 @@ export function getStyles(displayMode = "normal") {
       opacity: 0;
       visibility: hidden;
       transition: opacity 0.15s, visibility 0.15s;
+    }
+    .surf-tooltip.theme-style {
+      --surf-tooltip-bg: var(--ha-card-background, var(--card-background-color, #1e293b));
+      --surf-tooltip-text: var(--primary-text-color, #fff);
+      border: 1px solid var(--divider-color, #e2e8f0);
     }
     .surf-tooltip.visible {
       opacity: 1;

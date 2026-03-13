@@ -7,7 +7,7 @@ import {
   HOURLY_KEY_MAP,
   DAILY_KEY_MAP,
   CONDITION_ICONS,
-  DEFAULT_SHOW_PARAMS,
+  AVAILABLE_PARAM_KEYS,
 } from "./constants.js";
 import { degToCompass, fmt, escapeTitle, escapeHtml } from "./utils.js";
 import { getStyles } from "./styles.js";
@@ -30,11 +30,22 @@ export class OpenMeteoSurfCard extends HTMLElement {
     this._config = {
       entity: config.entity,
       forecast_type: config.forecast_type || "both",
-      show_params: config.show_params || DEFAULT_SHOW_PARAMS,
+      show_params: config.show_params || AVAILABLE_PARAM_KEYS,
       title: config.title || null,
       show_refresh_button: config.show_refresh_button !== false,
       show_refresh_text: config.show_refresh_text !== false,
       display_mode: config.display_mode || "normal",
+      show_header: config.show_header !== false,
+      show_current_conditions: config.show_current_conditions !== false,
+      show_forecast_table: config.show_forecast_table !== false,
+      show_tabs: config.show_tabs !== false,
+      show_header_logo: config.show_header_logo !== false,
+      forecast_rows_hourly: config.forecast_rows_hourly ?? null,
+      forecast_rows_daily: config.forecast_rows_daily ?? null,
+      primary_color: config.primary_color || null,
+      border_radius: config.border_radius ?? null,
+      show_watermark: config.show_watermark !== false,
+      tooltip_style: config.tooltip_style || "theme",
     };
     this._activeTab = this._config.forecast_type === "daily" ? "daily" : "hourly";
   }
@@ -88,10 +99,17 @@ export class OpenMeteoSurfCard extends HTMLElement {
     return {
       entity: "",
       forecast_type: "both",
-      show_params: DEFAULT_SHOW_PARAMS,
+      show_params: AVAILABLE_PARAM_KEYS,
       show_refresh_button: true,
       show_refresh_text: true,
       display_mode: "normal",
+      show_header: true,
+      show_current_conditions: true,
+      show_forecast_table: true,
+      show_tabs: true,
+      show_header_logo: true,
+      show_watermark: true,
+      tooltip_style: "theme",
     };
   }
 
@@ -110,13 +128,19 @@ export class OpenMeteoSurfCard extends HTMLElement {
     const title = this._config.title || attrs.friendly_name || "Surf Forecast";
     const condIcon = CONDITION_ICONS[stateObj.state] || "🌊";
     const displayMode = this._config.display_mode || "normal";
+    const headerStyle = this._config.header_style || "default";
+    const showHeader = this._config.show_header !== false;
+    const showLogo = this._config.show_header_logo !== false;
+    const watermarkClass = this._config.show_watermark === false ? " no-watermark" : "";
+    const tooltipClass = this._config.tooltip_style === "theme" ? " surf-tooltip theme-style" : " surf-tooltip";
 
     this.shadowRoot.innerHTML = `
-      <style>${getStyles(displayMode)}</style>
-      <div id="surf-tooltip" class="surf-tooltip"></div>
+      <style>${getStyles(displayMode, this._config)}</style>
+      <div id="surf-tooltip" class="${tooltipClass}"></div>
       <ha-card data-display-mode="${displayMode}">
+        ${showHeader ? `
         <div class="card-header">
-          <img src="/openmeteo_surf/icon.png" class="header-logo" />
+          ${showLogo ? '<img src="/openmeteo_surf/icon.png" class="header-logo" />' : ""}
           <span class="title" title="${escapeTitle(title)}">${condIcon} ${escapeHtml(title)}</span>
           ${this._config.show_refresh_button ? `
           <button
@@ -130,10 +154,11 @@ export class OpenMeteoSurfCard extends HTMLElement {
           </button>
           ` : ""}
         </div>
-        <div class="card-content">
-          ${this._renderCurrent(stateObj, attrs)}
+        ` : ""}
+        <div class="card-content${watermarkClass}">
+          ${this._config.show_current_conditions !== false ? this._renderCurrent(stateObj, attrs) : ""}
           ${this._renderTabs()}
-          ${this._renderForecastTable()}
+          ${this._config.show_forecast_table !== false ? this._renderForecastTable() : ""}
         </div>
       </ha-card>
     `;
@@ -238,7 +263,7 @@ export class OpenMeteoSurfCard extends HTMLElement {
 
   _renderTabs() {
     const ft = this._config.forecast_type;
-    if (ft !== "both") return "";
+    if (ft !== "both" || this._config.show_tabs === false || this._config.show_forecast_table === false) return "";
     return `
       <div class="tab-bar">
         <button class="tab-btn ${this._activeTab === "hourly" ? "active" : ""}" data-tab="hourly">⏰ Hourly</button>
@@ -259,10 +284,9 @@ export class OpenMeteoSurfCard extends HTMLElement {
     const keyMap = isHourly ? HOURLY_KEY_MAP : DAILY_KEY_MAP;
     const params = this._config.show_params.filter((p) => keyMap[p]);
     const isCompact = this._config.display_mode === "compact";
-
-    const rowLimit = isCompact
-      ? (isHourly ? 12 : 5)
-      : (isHourly ? 24 : data.length);
+    const maxHourly = this._config.forecast_rows_hourly ?? (isCompact ? 12 : 24);
+    const maxDaily = this._config.forecast_rows_daily ?? (isCompact ? 5 : Math.min(7, data.length));
+    const rowLimit = isHourly ? maxHourly : maxDaily;
     const rows = (isHourly ? data.slice(0, 24) : data).slice(0, rowLimit);
 
     const headerCells = params.map((p) => {

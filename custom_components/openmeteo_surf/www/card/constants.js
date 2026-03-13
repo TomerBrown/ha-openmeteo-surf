@@ -12,6 +12,21 @@ export const DEFAULT_SHOW_PARAMS = [
   "temperature",
 ];
 
+/** All parameters available for selection in the forecast table (hourly) */
+export const AVAILABLE_PARAM_KEYS = [
+  "wave_height",
+  "wave_period",
+  "wave_direction",
+  "swell_wave_height",
+  "swell_wave_period",
+  "swell_wave_direction",
+  "sea_surface_temperature",
+  "temperature",
+  "wind_speed",
+  "wind_direction",
+  "precipitation",
+];
+
 export const PARAM_META = {
   wave_height: { label: "Waves", unit: "m", icon: "🌊", desc: "Significant wave height (average of highest 1/3 of waves)" },
   wave_period: { label: "Period", unit: "s", icon: "⏱️", desc: "Dominant wave period (time between wave crests)" },
