@@ -11,6 +11,7 @@ import {
 } from "./constants.js";
 import { degToCompass, fmt, escapeTitle, escapeHtml } from "./utils.js";
 import { getStyles } from "./styles.js";
+import { localize, getParamTranslations } from "./i18n.js";
 
 export class OpenMeteoSurfCard extends HTMLElement {
   constructor() {
@@ -119,16 +120,17 @@ export class OpenMeteoSurfCard extends HTMLElement {
 
   _render() {
     if (!this._hass || !this._config.entity) return;
+    const locale = (this._hass.locale?.language ?? this._hass.locale ?? "en");
+    const t = (key, vars) => localize(locale, key, vars);
     const stateObj = this._hass.states[this._config.entity];
     if (!stateObj) {
-      this.shadowRoot.innerHTML = `<ha-card><div style="padding:16px">Entity not found: ${escapeHtml(this._config.entity)}</div></ha-card>`;
+      this.shadowRoot.innerHTML = `<ha-card><div style="padding:16px">${t("entity_not_found")}: ${escapeHtml(this._config.entity)}</div></ha-card>`;
       return;
     }
     const attrs = stateObj.attributes;
-    const title = this._config.title || attrs.friendly_name || "Surf Forecast";
+    const title = this._config.title || attrs.friendly_name || t("surf_forecast");
     const condIcon = CONDITION_ICONS[stateObj.state] || "🌊";
     const displayMode = this._config.display_mode || "normal";
-    const headerStyle = this._config.header_style || "default";
     const showHeader = this._config.show_header !== false;
     const showLogo = this._config.show_header_logo !== false;
     const watermarkClass = this._config.show_watermark === false ? " no-watermark" : "";
@@ -146,19 +148,19 @@ export class OpenMeteoSurfCard extends HTMLElement {
           <button
             class="refresh-btn ${this._config.show_refresh_text ? "with-text" : ""}"
             id="refresh-btn"
-            title="Refresh data"
+            title="${escapeTitle(t("refresh_data"))}"
             ${this._refreshing ? "disabled" : ""}
           >
             <span class="refresh-icon ${this._refreshing ? "spinning" : ""}">🔄</span>
-            ${this._config.show_refresh_text ? '<span class="refresh-label">Refresh</span>' : ""}
+            ${this._config.show_refresh_text ? `<span class="refresh-label">${escapeHtml(t("refresh"))}</span>` : ""}
           </button>
           ` : ""}
         </div>
         ` : ""}
         <div class="card-content${watermarkClass}">
-          ${this._config.show_current_conditions !== false ? this._renderCurrent(stateObj, attrs) : ""}
-          ${this._renderTabs()}
-          ${this._config.show_forecast_table !== false ? this._renderForecastTable() : ""}
+          ${this._config.show_current_conditions !== false ? this._renderCurrent(stateObj, attrs, locale, t) : ""}
+          ${this._renderTabs(t)}
+          ${this._config.show_forecast_table !== false ? this._renderForecastTable(locale, t) : ""}
         </div>
       </ha-card>
     `;
@@ -223,25 +225,25 @@ export class OpenMeteoSurfCard extends HTMLElement {
     }
   }
 
-  _renderCurrent(stateObj, attrs) {
+  _renderCurrent(stateObj, attrs, locale, t) {
     const temp = attrs.temperature != null ? `${attrs.temperature}°` : "–";
     const wind = attrs.wind_speed != null ? `${attrs.wind_speed} kt` : "–";
     const waveH = attrs.wave_height != null ? `${attrs.wave_height} m` : "–";
     const swellH = attrs.swell_wave_height != null ? `${attrs.swell_wave_height} m` : "–";
     const wavePer = attrs.wave_period != null ? `${attrs.wave_period}s` : "–";
-    const waveDir = attrs.wave_direction != null ? `${Math.round(attrs.wave_direction)}° ${degToCompass(attrs.wave_direction)}` : "–";
+    const waveDir = attrs.wave_direction != null ? `${Math.round(attrs.wave_direction)}° ${degToCompass(attrs.wave_direction, locale)}` : "–";
     const waterTemp = attrs.sea_surface_temperature != null ? `${attrs.sea_surface_temperature}°C` : "–";
-    const windDir = attrs.wind_bearing != null ? degToCompass(attrs.wind_bearing) : "–";
+    const windDir = attrs.wind_bearing != null ? degToCompass(attrs.wind_bearing, locale) : "–";
 
     const isCompact = this._config.display_mode === "compact";
 
     const stats = [
-      { icon: "🌊", value: waveH, label: "Wave Height", primary: true },
-      { icon: "⏱️", value: wavePer, label: "Period" },
-      { icon: "🧭", value: waveDir, label: "Wave Dir" },
-      { icon: "🌊", value: swellH, label: "Swell" },
-      { icon: "💨", value: `${wind} ${windDir}`, label: "Wind" },
-      { icon: "🌡️", value: `${temp} / ${waterTemp}`, label: "Air / Water" },
+      { icon: "🌊", value: waveH, label: t("wave_height"), primary: true },
+      { icon: "⏱️", value: wavePer, label: t("period") },
+      { icon: "🧭", value: waveDir, label: t("wave_dir") },
+      { icon: "🌊", value: swellH, label: t("swell") },
+      { icon: "💨", value: `${wind} ${windDir}`, label: t("wind") },
+      { icon: "🌡️", value: `${temp} / ${waterTemp}`, label: t("air_water") },
     ];
 
     const displayStats = isCompact
@@ -261,23 +263,23 @@ export class OpenMeteoSurfCard extends HTMLElement {
     `;
   }
 
-  _renderTabs() {
+  _renderTabs(t) {
     const ft = this._config.forecast_type;
     if (ft !== "both" || this._config.show_tabs === false || this._config.show_forecast_table === false) return "";
     return `
       <div class="tab-bar">
-        <button class="tab-btn ${this._activeTab === "hourly" ? "active" : ""}" data-tab="hourly">⏰ Hourly</button>
-        <button class="tab-btn ${this._activeTab === "daily" ? "active" : ""}" data-tab="daily">📅 Daily</button>
+        <button class="tab-btn ${this._activeTab === "hourly" ? "active" : ""}" data-tab="hourly">⏰ ${escapeHtml(t("hourly"))}</button>
+        <button class="tab-btn ${this._activeTab === "daily" ? "active" : ""}" data-tab="daily">📅 ${escapeHtml(t("daily"))}</button>
       </div>
     `;
   }
 
-  _renderForecastTable() {
+  _renderForecastTable(locale, t) {
     const tab = this._activeTab || "hourly";
     const data = this._forecasts[tab];
 
     if (!data || data.length === 0) {
-      return `<div class="no-data">Loading ${tab} forecast…</div>`;
+      return `<div class="no-data">${escapeHtml(t("loading_forecast", { type: t(tab === "hourly" ? "hourly" : "daily") }))}</div>`;
     }
 
     const isHourly = tab === "hourly";
@@ -291,20 +293,21 @@ export class OpenMeteoSurfCard extends HTMLElement {
 
     const headerCells = params.map((p) => {
       const meta = PARAM_META[p] || { label: p, unit: "", desc: "", icon: "" };
-      const label = isCompact && meta.label.length > 6 ? meta.label.slice(0, 6) : meta.label;
+      const tr = getParamTranslations(locale, p);
+      const label = tr.label || meta.label;
+      const desc = tr.desc || meta.desc;
+      const shortLabel = isCompact && label.length > 6 ? label.slice(0, 6) : label;
       const unitStr = meta.unit ? ` (${meta.unit})` : "";
-      const tooltip = meta.desc
-        ? `${meta.label}${unitStr} — ${meta.desc}`
-        : `${meta.label}${unitStr}`;
-      return `<th data-tooltip="${escapeTitle(tooltip)}">${meta.icon}<span class="th-label">${label}</span></th>`;
+      const tooltip = desc ? `${label}${unitStr} — ${desc}` : `${label}${unitStr}`;
+      return `<th data-tooltip="${escapeTitle(tooltip)}">${meta.icon}<span class="th-label">${escapeHtml(shortLabel)}</span></th>`;
     }).join("");
 
     const bodyRows = rows.map((entry) => {
       const dt = new Date(entry.datetime);
       const timeStr = isHourly
-        ? dt.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })
-        : dt.toLocaleDateString([], { weekday: "short", month: "short", day: "numeric" });
-      const timeTooltip = dt.toLocaleString([], {
+        ? dt.toLocaleTimeString(locale, { hour: "2-digit", minute: "2-digit" })
+        : dt.toLocaleDateString(locale, { weekday: "short", month: "short", day: "numeric" });
+      const timeTooltip = dt.toLocaleString(locale, {
         weekday: "long", year: "numeric", month: "long", day: "numeric",
         hour: isHourly ? "2-digit" : undefined, minute: isHourly ? "2-digit" : undefined,
       });
@@ -315,28 +318,27 @@ export class OpenMeteoSurfCard extends HTMLElement {
         const dataKey = keyMap[p];
         const val = entry[dataKey];
         const meta = PARAM_META[p] || { label: p, unit: "", desc: "" };
-        const displayVal = fmt(val, meta.unit);
+        const tr = getParamTranslations(locale, p);
+        const displayVal = fmt(val, meta.unit, locale);
         const unitStr = meta.unit && meta.unit !== "°" ? ` ${meta.unit}` : "";
         const valuePart = val != null && val !== undefined
-          ? `${meta.label}: ${displayVal}${unitStr}`
-          : meta.label;
-        const tooltip = meta.desc
-          ? `${valuePart} — ${meta.desc}`
+          ? `${tr.label || meta.label}: ${displayVal}${unitStr}`
+          : (tr.label || meta.label);
+        const tooltip = (tr.desc || meta.desc)
+          ? `${valuePart} — ${tr.desc || meta.desc}`
           : valuePart;
-        return `<td data-tooltip="${escapeTitle(tooltip)}">${displayVal}</td>`;
+        return `<td data-tooltip="${escapeTitle(tooltip)}">${escapeHtml(displayVal)}</td>`;
       }).join("");
 
       return `<tr><td class="time-cell" data-tooltip="${escapeTitle(timeTooltip)}">${condIcon} ${timeStr}</td>${cells}</tr>`;
     }).join("");
 
-    const timeHeaderTitle = isHourly
-      ? "Forecast time (local)"
-      : "Forecast date (local)";
+    const timeHeaderTitle = isHourly ? t("forecast_time") : t("forecast_date");
 
     return `
       <div class="forecast-table-wrap">
         <table class="forecast-table">
-          <thead><tr><th data-tooltip="${escapeTitle(timeHeaderTitle)}">Time</th>${headerCells}</tr></thead>
+          <thead><tr><th data-tooltip="${escapeTitle(timeHeaderTitle)}">${escapeHtml(t("time"))}</th>${headerCells}</tr></thead>
           <tbody>${bodyRows}</tbody>
         </table>
       </div>

@@ -3,6 +3,8 @@
  */
 
 import { AVAILABLE_PARAM_KEYS, PARAM_META } from "./constants.js";
+import { localize, getParamTranslations } from "./i18n.js";
+import { escapeHtml } from "./utils.js";
 
 function escapeAttr(s) {
   if (!s) return "";
@@ -52,6 +54,9 @@ export class OpenMeteoSurfCardEditor extends HTMLElement {
 
   _render() {
     if (!this._hass) return;
+
+    const locale = (this._hass.locale?.language ?? this._hass.locale ?? "en");
+    const t = (key, vars) => localize(locale, key, vars);
 
     const activeEl = document.activeElement;
     const focusState = activeEl?.id && this.shadowRoot.contains(activeEl)
@@ -110,120 +115,122 @@ export class OpenMeteoSurfCardEditor extends HTMLElement {
         .params-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 6px 16px; }
       </style>
       <div class="editor">
-        <label>Entity (weather.*)</label>
+        <label>${escapeHtml(t("entity_label"))}</label>
         <select id="entity">
-          <option value="" ${entityVal === "" ? "selected" : ""}>Select a weather entity</option>
+          <option value="" ${entityVal === "" ? "selected" : ""}>${escapeHtml(t("select_entity"))}</option>
           ${entityOptions}
         </select>
 
-        <label>Title (optional)</label>
-        <input id="title" value="${escapeAttr(titleVal)}" placeholder="Auto from entity name" />
+        <label>${escapeHtml(t("title_optional"))}</label>
+        <input id="title" value="${escapeAttr(titleVal)}" placeholder="${escapeAttr(t("title_placeholder"))}" />
 
         <div class="editor-section">
-          <div class="editor-section-title">Appearance</div>
-          <label>Display mode</label>
+          <div class="editor-section-title">${escapeHtml(t("appearance"))}</div>
+          <label>${escapeHtml(t("display_mode"))}</label>
           <select id="display_mode">
-            <option value="compact" ${displayModeVal === "compact" ? "selected" : ""}>Compact</option>
-            <option value="normal" ${displayModeVal === "normal" ? "selected" : ""}>Normal</option>
-            <option value="elaborated" ${displayModeVal === "elaborated" ? "selected" : ""}>Elaborated</option>
+            <option value="compact" ${displayModeVal === "compact" ? "selected" : ""}>${escapeHtml(t("compact"))}</option>
+            <option value="normal" ${displayModeVal === "normal" ? "selected" : ""}>${escapeHtml(t("normal"))}</option>
+            <option value="elaborated" ${displayModeVal === "elaborated" ? "selected" : ""}>${escapeHtml(t("elaborated"))}</option>
           </select>
-          <small>Compact: smaller, fewer stats. Elaborated: larger, more spacing.</small>
+          <small>${escapeHtml(t("display_mode_hint"))}</small>
 
           <div class="editor-row">
             <label class="editor-checkbox">
               <input type="checkbox" id="show_header" ${showHeader ? "checked" : ""} />
-              Show header
+              ${escapeHtml(t("show_header"))}
             </label>
           </div>
           <div class="editor-row">
             <label class="editor-checkbox">
               <input type="checkbox" id="show_header_logo" ${showHeaderLogo ? "checked" : ""} />
-              Show logo in header
+              ${escapeHtml(t("show_logo"))}
             </label>
           </div>
           <div class="editor-row">
             <label class="editor-checkbox">
               <input type="checkbox" id="show_watermark" ${showWatermark ? "checked" : ""} />
-              Show watermark
+              ${escapeHtml(t("show_watermark"))}
             </label>
           </div>
 
-          <label>Primary color override (optional)</label>
-          <input id="primary_color" value="${escapeAttr(primaryColorVal)}" placeholder="e.g. #0ea5e9 or leave empty for theme" />
+          <label>${escapeHtml(t("primary_color"))}</label>
+          <input id="primary_color" value="${escapeAttr(primaryColorVal)}" placeholder="${escapeAttr(t("primary_color_placeholder"))}" />
 
-          <label>Border radius (optional)</label>
-          <input id="border_radius" value="${escapeAttr(String(borderRadiusVal))}" placeholder="e.g. 12px or 16" />
+          <label>${escapeHtml(t("border_radius"))}</label>
+          <input id="border_radius" value="${escapeAttr(String(borderRadiusVal))}" placeholder="${escapeAttr(t("border_radius_placeholder"))}" />
 
-          <label>Tooltip style</label>
+          <label>${escapeHtml(t("tooltip_style"))}</label>
           <select id="tooltip_style">
-            <option value="theme" ${tooltipStyleVal === "theme" ? "selected" : ""}>Match theme</option>
-            <option value="dark" ${tooltipStyleVal === "dark" ? "selected" : ""}>Dark</option>
+            <option value="theme" ${tooltipStyleVal === "theme" ? "selected" : ""}>${escapeHtml(t("match_theme"))}</option>
+            <option value="dark" ${tooltipStyleVal === "dark" ? "selected" : ""}>${escapeHtml(t("dark"))}</option>
           </select>
         </div>
 
         <div class="editor-section">
-          <div class="editor-section-title">Content</div>
+          <div class="editor-section-title">${escapeHtml(t("content"))}</div>
           <div class="editor-row">
             <label class="editor-checkbox">
               <input type="checkbox" id="show_current_conditions" ${showCurrentConditions ? "checked" : ""} />
-              Show current conditions
+              ${escapeHtml(t("show_current_conditions"))}
             </label>
           </div>
           <div class="editor-row">
             <label class="editor-checkbox">
               <input type="checkbox" id="show_forecast_table" ${showForecastTable ? "checked" : ""} />
-              Show forecast table
+              ${escapeHtml(t("show_forecast_table"))}
             </label>
           </div>
 
-          <label>Forecast type</label>
+          <label>${escapeHtml(t("forecast_type"))}</label>
           <select id="forecast_type">
-            <option value="both"   ${ftVal === "both" ? "selected" : ""}>Both (hourly + daily)</option>
-            <option value="hourly" ${ftVal === "hourly" ? "selected" : ""}>Hourly only</option>
-            <option value="daily"  ${ftVal === "daily" ? "selected" : ""}>Daily only</option>
+            <option value="both"   ${ftVal === "both" ? "selected" : ""}>${escapeHtml(t("both_forecast"))}</option>
+            <option value="hourly" ${ftVal === "hourly" ? "selected" : ""}>${escapeHtml(t("hourly_only"))}</option>
+            <option value="daily"  ${ftVal === "daily" ? "selected" : ""}>${escapeHtml(t("daily_only"))}</option>
           </select>
 
-          <label>Hourly rows (optional)</label>
+          <label>${escapeHtml(t("hourly_rows"))}</label>
           <input type="number" id="forecast_rows_hourly" value="${escapeAttr(String(forecastRowsHourly))}" placeholder="24" min="1" max="48" />
 
-          <label>Daily rows (optional)</label>
+          <label>${escapeHtml(t("daily_rows"))}</label>
           <input type="number" id="forecast_rows_daily" value="${escapeAttr(String(forecastRowsDaily))}" placeholder="7" min="1" max="14" />
 
           ${ftVal === "both" && showForecastTable ? `
           <div class="editor-row">
             <label class="editor-checkbox">
               <input type="checkbox" id="show_tabs" ${showTabs ? "checked" : ""} />
-              Show tabs (hourly/daily)
+              ${escapeHtml(t("show_tabs"))}
             </label>
           </div>
           ` : ""}
 
-          <label>Show parameters</label>
+          <label>${escapeHtml(t("show_parameters"))}</label>
           <div class="params-grid">
             ${AVAILABLE_PARAM_KEYS.map((key) => {
               const meta = PARAM_META[key] || { label: key, icon: "" };
+              const tr = getParamTranslations(locale, key);
+              const label = tr.label || meta.label;
               const checked = selectedParams.includes(key);
               return `
               <label class="editor-checkbox">
                 <input type="checkbox" class="param-cb" data-param="${escapeAttr(key)}" ${checked ? "checked" : ""} />
-                ${meta.icon || ""} ${escapeAttr(meta.label)}
+                ${meta.icon || ""} ${escapeAttr(label)}
               </label>`;
             }).join("")}
           </div>
         </div>
 
         <div class="editor-section">
-          <div class="editor-section-title">Refresh</div>
+          <div class="editor-section-title">${escapeHtml(t("refresh_section"))}</div>
           <div class="editor-row">
             <label class="editor-checkbox">
               <input type="checkbox" id="show_refresh_button" ${showRefreshBtn ? "checked" : ""} />
-              Show refresh button
+              ${escapeHtml(t("show_refresh_button"))}
             </label>
           </div>
           <div class="editor-row">
             <label class="editor-checkbox">
               <input type="checkbox" id="show_refresh_text" ${showRefreshText ? "checked" : ""} />
-              Show "Refresh" text on button
+              ${escapeHtml(t("show_refresh_text"))}
             </label>
           </div>
         </div>
