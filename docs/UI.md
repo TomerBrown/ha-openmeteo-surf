@@ -21,6 +21,7 @@ entity: weather.open_meteo_surf
 type: custom:openmeteo-surf-card
 entity: weather.open_meteo_surf
 title: "My Surf Spot"
+display_mode: normal           # "compact" | "normal" | "elaborated"
 forecast_type: both            # "hourly" | "daily" | "both"
 show_params:
   - wave_height
@@ -40,6 +41,7 @@ show_params:
 |--------|----------|---------|-------------|
 | `entity` | ✅ | – | Weather entity ID (e.g. `weather.pipeline`) |
 | `title` | ❌ | Entity name | Card title override |
+| `display_mode` | ❌ | `normal` | `compact` (smaller, fewer stats), `normal`, or `elaborated` (larger, more spacing) |
 | `forecast_type` | ❌ | `both` | `hourly`, `daily`, or `both` |
 | `show_params` | ❌ | (all main params) | Which parameters to show in forecast table |
 
